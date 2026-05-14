@@ -7,7 +7,7 @@ Static GitHub page for browsing two internship work folders:
 
 It supports:
 
-- PDF visualization directly in the browser
+- PDF reports packaged as zip downloads
 - Python source visualization
 - Jupyter notebook cell visualization
 - A directory tree that mirrors the source folders
@@ -17,9 +17,9 @@ It supports:
 ```text
 archive/
 ├── 2023_NoeScharer_Internship_DThPh/
-│   └── NoeScharer_report_internship_DThPh.pdf
+│   └── NoeScharer_report_internship_DThPh.zip
 └── 2024_NoeScharer_Internship_DPNC/
-    ├── NoeScharer_report_internship_DPNC.pdf
+    ├── NoeScharer_report_internship_DPNC.zip
     ├── CNN_final/
     │   ├── executable_CNN.py
     │   ├── executable_production_MDC.py

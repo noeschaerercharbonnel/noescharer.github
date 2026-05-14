@@ -160,8 +160,8 @@ summary {
   font-weight: 900;
 }
 
-.file-node-pdf::before {
-  content: "PDF";
+.file-node-download::before {
+  content: "ZIP";
 }
 
 .file-node-python::before {
@@ -197,7 +197,7 @@ summary {
   overflow-wrap: anywhere;
 }
 
-.pdf-panel,
+.download-panel,
 .code-panel,
 .notebook-panel,
 .empty-panel {
@@ -209,12 +209,34 @@ summary {
   overflow: hidden;
 }
 
-.pdf-panel iframe {
-  display: block;
-  width: 100%;
-  height: calc(100vh - 188px);
-  min-height: 620px;
-  border: 0;
+.download-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 220px;
+  padding: 24px;
+}
+
+.download-panel p:not(.eyebrow) {
+  margin: 10px 0 0;
+  max-width: 620px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 136px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
 }
 
 .code-panel,
@@ -304,8 +326,12 @@ pre {
     width: 100%;
   }
 
-  .pdf-panel iframe {
-    height: 68vh;
-    min-height: 460px;
+  .download-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .download-link {
+    width: 100%;
   }
 }

@@ -28,14 +28,19 @@
         <div class="viewer-header">
           <div>
             <p id="file-kind" class="eyebrow">Select a file</p>
-            <h2 id="file-title">Choose a PDF or code file</h2>
+            <h2 id="file-title">Choose a report or code file</h2>
             <p id="file-path">The directory tree matches the two source folders.</p>
           </div>
           <a id="open-raw" class="raw-link" href="#" target="_blank" rel="noreferrer">Open raw</a>
         </div>
 
-        <div id="pdf-panel" class="pdf-panel" hidden>
-          <iframe id="pdf-frame" title="PDF preview"></iframe>
+        <div id="download-panel" class="download-panel" hidden>
+          <div>
+            <p class="eyebrow">Packaged PDF</p>
+            <h2 id="download-title">Download report</h2>
+            <p id="download-description">The PDF is inside a zip archive so GitHub will offer it as a download instead of previewing it directly.</p>
+          </div>
+          <a id="download-link" class="download-link" href="#" download>Download zip</a>
         </div>
 
         <div id="code-panel" class="code-panel" hidden>
@@ -46,7 +51,7 @@
 
         <div id="empty-panel" class="empty-panel">
           <h2>Simple GitHub-ready file visualization</h2>
-          <p>Browse the internship reports, Python scripts, and notebook from one static page.</p>
+          <p>Browse downloadable reports, Python scripts, and the notebook from one static page.</p>
         </div>
       </section>
     </main>

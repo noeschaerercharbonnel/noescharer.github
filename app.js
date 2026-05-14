@@ -1,14 +1,14 @@
 const files = [
   {
-    label: "NoeScharer_report_internship_DThPh.pdf",
-    path: "archive/2023_NoeScharer_Internship_DThPh/NoeScharer_report_internship_DThPh.pdf",
-    type: "pdf",
+    label: "NoeScharer_report_internship_DThPh.zip",
+    path: "archive/2023_NoeScharer_Internship_DThPh/NoeScharer_report_internship_DThPh.zip",
+    type: "download",
     project: "2023_NoeScharer_Internship_DThPh"
   },
   {
-    label: "NoeScharer_report_internship_DPNC.pdf",
-    path: "archive/2024_NoeScharer_Internship_DPNC/NoeScharer_report_internship_DPNC.pdf",
-    type: "pdf",
+    label: "NoeScharer_report_internship_DPNC.zip",
+    path: "archive/2024_NoeScharer_Internship_DPNC/NoeScharer_report_internship_DPNC.zip",
+    type: "download",
     project: "2024_NoeScharer_Internship_DPNC"
   },
   {
@@ -49,8 +49,9 @@ const fileKind = document.querySelector("#file-kind");
 const fileTitle = document.querySelector("#file-title");
 const filePath = document.querySelector("#file-path");
 const openRaw = document.querySelector("#open-raw");
-const pdfPanel = document.querySelector("#pdf-panel");
-const pdfFrame = document.querySelector("#pdf-frame");
+const downloadPanel = document.querySelector("#download-panel");
+const downloadTitle = document.querySelector("#download-title");
+const downloadLink = document.querySelector("#download-link");
 const codePanel = document.querySelector("#code-panel");
 const codeOutput = document.querySelector("#code-output");
 const notebookPanel = document.querySelector("#notebook-panel");
@@ -112,13 +113,13 @@ function setActive(file) {
     button.classList.toggle("is-active", button.textContent === file.label);
   });
 
-  fileKind.textContent = file.type === "pdf" ? "PDF report" : file.type === "notebook" ? "Jupyter notebook" : "Python source";
+  fileKind.textContent = file.type === "download" ? "Report download" : file.type === "notebook" ? "Jupyter notebook" : "Python source";
   fileTitle.textContent = file.label;
   filePath.textContent = file.path;
   openRaw.href = file.path;
   openRaw.style.visibility = "visible";
 
-  pdfPanel.hidden = true;
+  downloadPanel.hidden = true;
   codePanel.hidden = true;
   notebookPanel.hidden = true;
   emptyPanel.hidden = true;
@@ -181,9 +182,11 @@ async function showNotebook(file) {
 async function showFile(file) {
   setActive(file);
 
-  if (file.type === "pdf") {
-    pdfFrame.src = file.path;
-    pdfPanel.hidden = false;
+  if (file.type === "download") {
+    downloadTitle.textContent = file.label.replace(".zip", ".pdf");
+    downloadLink.href = file.path;
+    downloadLink.setAttribute("download", file.label);
+    downloadPanel.hidden = false;
     return;
   }
 
