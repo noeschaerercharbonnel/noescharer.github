@@ -1,6 +1,6 @@
 # Internship Archive
 
-A very small static GitHub Pages site for browsing the structure of two internship folders:
+Static GitHub page for browsing two internship work folders:
 
 - `2023_NoeScharer_Internship_DThPh`
 - `2024_NoeScharer_Internship_DPNC`
