@@ -1,206 +1,206 @@
-import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+const files = [
+  {
+    label: "NoeScharer_report_internship_DThPh.pdf",
+    path: "archive/2023_NoeScharer_Internship_DThPh/NoeScharer_report_internship_DThPh.pdf",
+    type: "pdf",
+    project: "2023_NoeScharer_Internship_DThPh"
+  },
+  {
+    label: "NoeScharer_report_internship_DPNC.pdf",
+    path: "archive/2024_NoeScharer_Internship_DPNC/NoeScharer_report_internship_DPNC.pdf",
+    type: "pdf",
+    project: "2024_NoeScharer_Internship_DPNC"
+  },
+  {
+    label: "plot_final.py",
+    path: "archive/2024_NoeScharer_Internship_DPNC/CNN_final/plot_final.py",
+    type: "python",
+    project: "2024_NoeScharer_Internship_DPNC"
+  },
+  {
+    label: "executable_production_SCALES.py",
+    path: "archive/2024_NoeScharer_Internship_DPNC/CNN_final/executable_production_SCALES.py",
+    type: "python",
+    project: "2024_NoeScharer_Internship_DPNC"
+  },
+  {
+    label: "executable_production_MDC.py",
+    path: "archive/2024_NoeScharer_Internship_DPNC/CNN_final/executable_production_MDC.py",
+    type: "python",
+    project: "2024_NoeScharer_Internship_DPNC"
+  },
+  {
+    label: "executable_CNN.py",
+    path: "archive/2024_NoeScharer_Internship_DPNC/CNN_final/executable_CNN.py",
+    type: "python",
+    project: "2024_NoeScharer_Internship_DPNC"
+  },
+  {
+    label: "MF.ipynb",
+    path: "archive/2024_NoeScharer_Internship_DPNC/MF_final/MF.ipynb",
+    type: "notebook",
+    project: "2024_NoeScharer_Internship_DPNC"
+  }
+];
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+const tree = document.querySelector("#tree");
+const fileCount = document.querySelector("#file-count");
+const fileKind = document.querySelector("#file-kind");
+const fileTitle = document.querySelector("#file-title");
+const filePath = document.querySelector("#file-path");
+const openRaw = document.querySelector("#open-raw");
+const pdfPanel = document.querySelector("#pdf-panel");
+const pdfFrame = document.querySelector("#pdf-frame");
+const codePanel = document.querySelector("#code-panel");
+const codeOutput = document.querySelector("#code-output");
+const notebookPanel = document.querySelector("#notebook-panel");
+const emptyPanel = document.querySelector("#empty-panel");
 
-const fileInput = document.querySelector("#file-input");
-const dropZone = document.querySelector("#drop-zone");
-const canvasStage = document.querySelector("#canvas-stage");
-const canvas = document.querySelector("#pdf-canvas");
-const context = canvas.getContext("2d");
-const emptyState = document.querySelector("#empty-state");
-const thumbnails = document.querySelector("#thumbnails");
+function directoryTree(paths) {
+  const root = {};
 
-const docName = document.querySelector("#doc-name");
-const docPages = document.querySelector("#doc-pages");
-const docSize = document.querySelector("#doc-size");
-const pageNumberInput = document.querySelector("#page-number");
-const pageCount = document.querySelector("#page-count");
-const zoomLevel = document.querySelector("#zoom-level");
+  for (const file of paths) {
+    const parts = file.path.replace("archive/", "").split("/");
+    let node = root;
 
-const controls = {
-  prev: document.querySelector("#prev-page"),
-  next: document.querySelector("#next-page"),
-  zoomOut: document.querySelector("#zoom-out"),
-  zoomIn: document.querySelector("#zoom-in"),
-  fitWidth: document.querySelector("#fit-width"),
-  rotate: document.querySelector("#rotate")
-};
-
-let pdfDocument = null;
-let currentPage = 1;
-let currentScale = 1;
-let rotation = 0;
-let fileName = "";
-let activeRenderTask = null;
-
-function formatBytes(bytes) {
-  if (!bytes) return "-";
-  const units = ["B", "KB", "MB", "GB"];
-  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-  return `${(bytes / 1024 ** index).toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function updateControls() {
-  const hasDocument = Boolean(pdfDocument);
-  const total = pdfDocument?.numPages ?? 0;
-
-  pageNumberInput.disabled = !hasDocument;
-  controls.prev.disabled = !hasDocument || currentPage <= 1;
-  controls.next.disabled = !hasDocument || currentPage >= total;
-  controls.zoomOut.disabled = !hasDocument || currentScale <= 0.35;
-  controls.zoomIn.disabled = !hasDocument || currentScale >= 3;
-  controls.fitWidth.disabled = !hasDocument;
-  controls.rotate.disabled = !hasDocument;
-
-  pageNumberInput.max = total || 1;
-  pageNumberInput.value = currentPage;
-  pageCount.textContent = total || "-";
-  zoomLevel.textContent = `${Math.round(currentScale * 100)}%`;
-
-  document.querySelectorAll(".thumbnail").forEach((button) => {
-    button.setAttribute("aria-current", Number(button.dataset.page) === currentPage ? "page" : "false");
-  });
-}
-
-async function renderPage(pageNumber) {
-  if (!pdfDocument) return;
-
-  const page = await pdfDocument.getPage(pageNumber);
-  const viewport = page.getViewport({ scale: currentScale, rotation });
-  const outputScale = window.devicePixelRatio || 1;
-
-  if (activeRenderTask) {
-    activeRenderTask.cancel();
+    parts.forEach((part, index) => {
+      node[part] ??= index === parts.length - 1 ? file : {};
+      node = node[part];
+    });
   }
 
-  canvas.width = Math.floor(viewport.width * outputScale);
-  canvas.height = Math.floor(viewport.height * outputScale);
-  canvas.style.width = `${Math.floor(viewport.width)}px`;
-  canvas.style.height = `${Math.floor(viewport.height)}px`;
-
-  context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  activeRenderTask = page.render({ canvasContext: context, viewport });
-
-  try {
-    await activeRenderTask.promise;
-  } catch (error) {
-    if (error?.name !== "RenderingCancelledException") {
-      throw error;
-    }
-  } finally {
-    activeRenderTask = null;
-  }
-
-  canvas.style.display = "block";
-  emptyState.style.display = "none";
-  updateControls();
+  return root;
 }
 
-async function renderThumbnails() {
-  thumbnails.replaceChildren();
-
-  if (!pdfDocument) return;
-
-  for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber += 1) {
-    const page = await pdfDocument.getPage(pageNumber);
-    const viewport = page.getViewport({ scale: 0.18 });
-    const thumbCanvas = document.createElement("canvas");
-    const thumbContext = thumbCanvas.getContext("2d");
-    const outputScale = window.devicePixelRatio || 1;
-
-    thumbCanvas.width = Math.floor(viewport.width * outputScale);
-    thumbCanvas.height = Math.floor(viewport.height * outputScale);
-    thumbContext.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-    await page.render({ canvasContext: thumbContext, viewport }).promise;
-
+function createTreeNode(name, value) {
+  if (value.path) {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "thumbnail";
-    button.dataset.page = String(pageNumber);
-    button.append(thumbCanvas, `Page ${pageNumber}`);
-    button.addEventListener("click", () => goToPage(pageNumber));
-    thumbnails.append(button);
+    button.className = `file-node file-node-${value.type}`;
+    button.textContent = name;
+    button.addEventListener("click", () => showFile(value));
+    return button;
   }
+
+  const details = document.createElement("details");
+  details.open = true;
+
+  const summary = document.createElement("summary");
+  summary.textContent = name;
+  details.append(summary);
+
+  const group = document.createElement("div");
+  group.className = "tree-group";
+
+  Object.entries(value)
+    .sort(([aName, aValue], [bName, bValue]) => {
+      const aFile = Boolean(aValue.path);
+      const bFile = Boolean(bValue.path);
+      if (aFile !== bFile) return aFile ? 1 : -1;
+      return aName.localeCompare(bName);
+    })
+    .forEach(([childName, childValue]) => {
+      group.append(createTreeNode(childName, childValue));
+    });
+
+  details.append(group);
+  return details;
 }
 
-async function loadPdf(file) {
-  if (!file || file.type !== "application/pdf") return;
+function setActive(file) {
+  document.querySelectorAll(".file-node").forEach((button) => {
+    button.classList.toggle("is-active", button.textContent === file.label);
+  });
 
-  fileName = file.name;
-  const arrayBuffer = await file.arrayBuffer();
-  pdfDocument = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  currentPage = 1;
-  currentScale = 1;
-  rotation = 0;
+  fileKind.textContent = file.type === "pdf" ? "PDF report" : file.type === "notebook" ? "Jupyter notebook" : "Python source";
+  fileTitle.textContent = file.label;
+  filePath.textContent = file.path;
+  openRaw.href = file.path;
+  openRaw.style.visibility = "visible";
 
-  docName.textContent = fileName;
-  docPages.textContent = String(pdfDocument.numPages);
-  docSize.textContent = formatBytes(file.size);
-
-  updateControls();
-  await renderPage(currentPage);
-  renderThumbnails();
+  pdfPanel.hidden = true;
+  codePanel.hidden = true;
+  notebookPanel.hidden = true;
+  emptyPanel.hidden = true;
 }
 
-async function goToPage(pageNumber) {
-  if (!pdfDocument) return;
-  currentPage = clamp(pageNumber, 1, pdfDocument.numPages);
-  await renderPage(currentPage);
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
-async function fitToWidth() {
-  if (!pdfDocument) return;
-  const page = await pdfDocument.getPage(currentPage);
-  const viewport = page.getViewport({ scale: 1, rotation });
-  const availableWidth = canvasStage.clientWidth - 56;
-  currentScale = clamp(availableWidth / viewport.width, 0.35, 3);
-  await renderPage(currentPage);
+function highlightPython(source) {
+  const escaped = escapeHtml(source);
+  return escaped
+    .replace(/("""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span class="token string">$1</span>')
+    .replace(/(^|\s)(#.*)$/gm, '$1<span class="token comment">$2</span>')
+    .replace(/\b(import|from|def|return|for|while|if|elif|else|class|try|except|with|as|in|not|and|or|None|True|False)\b/g, '<span class="token keyword">$1</span>');
 }
 
-fileInput.addEventListener("change", (event) => {
-  loadPdf(event.target.files[0]);
+async function showCode(file) {
+  const response = await fetch(file.path);
+  const source = await response.text();
+  codeOutput.innerHTML = highlightPython(source);
+  codePanel.hidden = false;
+}
+
+function renderNotebookCell(cell, index) {
+  const section = document.createElement("section");
+  section.className = `notebook-cell notebook-cell-${cell.cell_type}`;
+
+  const label = document.createElement("p");
+  label.className = "cell-label";
+  label.textContent = `${index + 1}. ${cell.cell_type}`;
+  section.append(label);
+
+  const pre = document.createElement("pre");
+  const code = document.createElement("code");
+  const source = Array.isArray(cell.source) ? cell.source.join("") : String(cell.source ?? "");
+  code.textContent = source.trim() || "(empty cell)";
+  pre.append(code);
+  section.append(pre);
+
+  return section;
+}
+
+async function showNotebook(file) {
+  const response = await fetch(file.path);
+  const notebook = await response.json();
+  notebookPanel.replaceChildren();
+
+  const cells = Array.isArray(notebook.cells) ? notebook.cells : [];
+  cells.forEach((cell, index) => {
+    notebookPanel.append(renderNotebookCell(cell, index));
+  });
+
+  notebookPanel.hidden = false;
+}
+
+async function showFile(file) {
+  setActive(file);
+
+  if (file.type === "pdf") {
+    pdfFrame.src = file.path;
+    pdfPanel.hidden = false;
+    return;
+  }
+
+  if (file.type === "notebook") {
+    await showNotebook(file);
+    return;
+  }
+
+  await showCode(file);
+}
+
+const root = directoryTree(files);
+fileCount.textContent = `${files.length} files`;
+openRaw.style.visibility = "hidden";
+
+Object.entries(root).forEach(([name, value]) => {
+  tree.append(createTreeNode(name, value));
 });
 
-dropZone.addEventListener("dragover", (event) => {
-  event.preventDefault();
-  dropZone.classList.add("is-dragging");
-});
-
-dropZone.addEventListener("dragleave", () => {
-  dropZone.classList.remove("is-dragging");
-});
-
-dropZone.addEventListener("drop", (event) => {
-  event.preventDefault();
-  dropZone.classList.remove("is-dragging");
-  loadPdf(event.dataTransfer.files[0]);
-});
-
-controls.prev.addEventListener("click", () => goToPage(currentPage - 1));
-controls.next.addEventListener("click", () => goToPage(currentPage + 1));
-controls.zoomOut.addEventListener("click", () => {
-  currentScale = clamp(currentScale - 0.15, 0.35, 3);
-  renderPage(currentPage);
-});
-controls.zoomIn.addEventListener("click", () => {
-  currentScale = clamp(currentScale + 0.15, 0.35, 3);
-  renderPage(currentPage);
-});
-controls.fitWidth.addEventListener("click", fitToWidth);
-controls.rotate.addEventListener("click", () => {
-  rotation = (rotation + 90) % 360;
-  renderPage(currentPage);
-});
-
-pageNumberInput.addEventListener("change", () => {
-  goToPage(Number(pageNumberInput.value));
-});
-
-updateControls();
+showFile(files[0]);

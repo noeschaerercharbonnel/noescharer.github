@@ -3,75 +3,50 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PDF Visualizer</title>
+    <title>Internship Archive</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <header class="app-header">
+    <header class="topbar">
       <div>
-        <h1>PDF Visualizer</h1>
-        <p>Open a PDF, render pages, and inspect it visually.</p>
+        <p class="eyebrow">Noe Schaerer</p>
+        <h1>Internship Archive</h1>
       </div>
-      <label class="file-button">
-        <input id="file-input" type="file" accept="application/pdf">
-        Open PDF
-      </label>
+      <a class="repo-link" href="README.md">README</a>
     </header>
 
-    <main class="workspace">
-      <aside class="sidebar" aria-label="PDF information and pages">
-        <section class="drop-zone" id="drop-zone">
-          <strong>Drop PDF here</strong>
-          <span>or use the open button</span>
-        </section>
-
-        <section class="info-panel">
-          <h2>Document</h2>
-          <dl>
-            <div>
-              <dt>Name</dt>
-              <dd id="doc-name">No file selected</dd>
-            </div>
-            <div>
-              <dt>Pages</dt>
-              <dd id="doc-pages">-</dd>
-            </div>
-            <div>
-              <dt>Size</dt>
-              <dd id="doc-size">-</dd>
-            </div>
-          </dl>
-        </section>
-
-        <section class="thumbnail-panel">
-          <h2>Pages</h2>
-          <div id="thumbnails" class="thumbnails" aria-label="Page thumbnails"></div>
-        </section>
+    <main class="layout">
+      <aside class="navigator" aria-label="Archive files">
+        <div class="navigator-title">
+          <span>Structure</span>
+          <span id="file-count">0 files</span>
+        </div>
+        <div id="tree" class="tree"></div>
       </aside>
 
-      <section class="viewer-shell">
-        <div class="toolbar" aria-label="PDF controls">
-          <button id="prev-page" type="button" title="Previous page" aria-label="Previous page">‹</button>
-          <div class="page-readout">
-            <input id="page-number" type="number" min="1" value="1" aria-label="Page number">
-            <span>/</span>
-            <span id="page-count">-</span>
+      <section class="viewer" aria-live="polite">
+        <div class="viewer-header">
+          <div>
+            <p id="file-kind" class="eyebrow">Select a file</p>
+            <h2 id="file-title">Choose a PDF or code file</h2>
+            <p id="file-path">The directory tree matches the two source folders.</p>
           </div>
-          <button id="next-page" type="button" title="Next page" aria-label="Next page">›</button>
-          <span class="toolbar-divider"></span>
-          <button id="zoom-out" type="button" title="Zoom out" aria-label="Zoom out">−</button>
-          <span id="zoom-level" class="zoom-level">100%</span>
-          <button id="zoom-in" type="button" title="Zoom in" aria-label="Zoom in">+</button>
-          <button id="fit-width" type="button">Fit width</button>
-          <button id="rotate" type="button">Rotate</button>
+          <a id="open-raw" class="raw-link" href="#" target="_blank" rel="noreferrer">Open raw</a>
         </div>
 
-        <div class="canvas-stage" id="canvas-stage">
-          <div class="empty-state" id="empty-state">
-            <h2>Open a PDF to begin</h2>
-            <p>The selected page will render here with zoom, rotate, fit-width, and page navigation.</p>
-          </div>
-          <canvas id="pdf-canvas" aria-label="Rendered PDF page"></canvas>
+        <div id="pdf-panel" class="pdf-panel" hidden>
+          <iframe id="pdf-frame" title="PDF preview"></iframe>
+        </div>
+
+        <div id="code-panel" class="code-panel" hidden>
+          <pre><code id="code-output"></code></pre>
+        </div>
+
+        <div id="notebook-panel" class="notebook-panel" hidden></div>
+
+        <div id="empty-panel" class="empty-panel">
+          <h2>Simple GitHub-ready file visualization</h2>
+          <p>Browse the internship reports, Python scripts, and notebook from one static page.</p>
         </div>
       </section>
     </main>

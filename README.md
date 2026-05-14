@@ -1,21 +1,42 @@
-# PDF Visualizer
+# Internship Archive
 
-A tiny static web app for opening a local PDF, rendering pages in the browser, and inspecting the document with zoom, rotate, fit-width, navigation, and thumbnails.
+A very small static GitHub Pages site for browsing the structure of two internship folders:
 
-## Use Locally
+- `2023_NoeScharer_Internship_DThPh`
+- `2024_NoeScharer_Internship_DPNC`
 
-Open `index.html` in a browser, or serve the folder with any static server.
+It supports:
+
+- PDF visualization directly in the browser
+- Python source visualization
+- Jupyter notebook cell visualization
+- A directory tree that mirrors the source folders
+
+## Structure
+
+```text
+archive/
+├── 2023_NoeScharer_Internship_DThPh/
+│   └── NoeScharer_report_internship_DThPh.pdf
+└── 2024_NoeScharer_Internship_DPNC/
+    ├── NoeScharer_report_internship_DPNC.pdf
+    ├── CNN_final/
+    │   ├── executable_CNN.py
+    │   ├── executable_production_MDC.py
+    │   ├── executable_production_SCALES.py
+    │   └── plot_final.py
+    └── MF_final/
+        └── MF.ipynb
+```
+
+## Run Locally
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then visit `http://localhost:8000`.
+Then open `http://localhost:8000`.
 
-## Deploy On GitHub Pages
+## GitHub Pages
 
-1. Push this project to a GitHub repository.
-2. Open the repository settings.
-3. Enable GitHub Pages from the `main` branch.
-
-No build step is required.
+Push the repository to GitHub, then enable GitHub Pages from the `main` branch in the repository settings.
